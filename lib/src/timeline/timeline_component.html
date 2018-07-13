@@ -1,0 +1,66 @@
+<svg width="900" height="510" viewBox="0 0 900 510"
+     xmlns="http://www.w3.org/2000/svg"
+     #vis>
+
+  <style>
+    * {
+      font-family: Roboto, Helvetica, Arial, sans-serif;
+    }
+  </style>
+
+  <g *ngFor="let r of records">
+    <title>{{ r.title }}</title>
+    <line [attr.x1]="timeToX(r.start)" [attr.y1]="recordToY(r)"
+          [attr.x2]="timeToX(r.completion)" [attr.y2]="recordToY(r)"
+          style="stroke:rgb(150,150,150);stroke-width:1" ></line>
+    <circle r="5"
+            [attr.cx]="timeToX(r.completion)" [attr.cy]="recordToY(r)">
+    </circle>
+    <text [attr.x]="timeToX(r.completion)" [attr.y]="recordToY(r) - 15"
+          font-size="12"
+          fill="black" text-anchor="end" alignment-baseline="central">
+      {{ r.shortTitle }}
+    </text>
+  </g>
+
+
+  <line x1="0" y1="480" x2="900" y2="480"
+        style="stroke:rgb(0,0,0);stroke-width:2"></line>
+  <line x1="900" y1="480" x2="880" y2="475"
+        style="stroke:rgb(0,0,0);stroke-width:2"></line>
+  <line x1="900" y1="480" x2="880" y2="485"
+        style="stroke:rgb(0,0,0);stroke-width:2"></line>
+
+  <g *ngFor="let month of monthTicks">
+    <line [attr.x1]="timeToX(month.time)" [attr.y1]="480 - 5"
+          [attr.x2]="timeToX(month.time)" [attr.y2]="480 + 5"
+          style="stroke:rgb(0,0,0);stroke-width:2"></line>
+    <text [attr.x]="timeToX(month.time)" [attr.y]="480 + 20"
+          text-anchor="middle" font-size="12">
+      {{ month.title }}
+    </text>
+  </g>
+
+</svg>
+
+<br>
+<br>
+<br>
+<br>
+<hr>
+
+<button (click)="download()">Download</button>
+
+<ul>
+  <li *ngFor="let r of records; let i=index">
+    {{ r.title }} (x = {{ timeToX(r.completion) }},
+    start = {{ timeToX(r.start) }},
+    y = {{ recordToY(r) }})
+  </li>
+</ul>
+
+<ul>
+  <li *ngFor="let month of monthTicks">
+    {{ month.title }} (x = {{ timeToX(month.time) }})
+  </li>
+</ul>
