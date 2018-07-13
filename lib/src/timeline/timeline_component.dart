@@ -65,7 +65,7 @@ class TimelineComponent implements OnInit {
 
   final int width = 900;
 
-  final int height = 500;
+  final int height = 600;
 
   DateTime _lowestTime = new DateTime(1900);
 
