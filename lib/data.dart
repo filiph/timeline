@@ -7,6 +7,7 @@ final records = [
   new TimelineRecord("iOS Devs Meetup", new DateTime(2018, 8, 20)),
   new TimelineRecord("DevFest Tokyo", new DateTime(2018, 9, 1)),
   new TimelineRecord("GDD China", new DateTime(2018, 9, 21), const Duration(days: 2)),
+  new TimelineRecord("WomenWhoCode Hackathon", new DateTime(2018, 9, 21)),
   new TimelineRecord("DevFest Ukraine", new DateTime(2018, 10, 12)),
   new TimelineRecord("DevFest India", new DateTime(2018, 10, 13)),
   new TimelineRecord("DevFest Nantes", new DateTime(2018, 10, 18)),
@@ -23,6 +24,4 @@ final records = [
   new TimelineRecord("Devoxx BE", new DateTime(2018, 11, 17), const Duration(days: 5)),
   new TimelineRecord("GOTO Copenhagen", new DateTime(2018, 11, 19), const Duration(days: 5)),
   new TimelineRecord("London Event", new DateTime(2018, 12, 3)),
-  new TimelineRecord(
-      "DevFest Season", new DateTime(2018, 12, 1), const Duration(days: 90)),
 ]..sort((a, b) => b.duration.compareTo(a.duration));
