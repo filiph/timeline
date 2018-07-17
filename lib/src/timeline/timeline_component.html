@@ -12,7 +12,7 @@
     <title>{{ r.title }}</title>
     <line [attr.x1]="timeToX(r.start)" [attr.y1]="recordToY(r)"
           [attr.x2]="timeToX(r.completion)" [attr.y2]="recordToY(r)"
-          style="stroke:rgb(150,150,150);stroke-width:1" ></line>
+          style="stroke:rgb(150,150,150);stroke-width:1px" ></line>
     <circle r="5"
             [attr.cx]="timeToX(r.completion)" [attr.cy]="recordToY(r)">
     </circle>
@@ -25,16 +25,16 @@
 
 
   <line x1="0" [attr.y1]="height - 30" x2="900" [attr.y2]="height - 30"
-        style="stroke:rgb(0,0,0);stroke-width:2"></line>
+        style="stroke:rgb(0,0,0);stroke-width:2px"></line>
   <line x1="900" [attr.y1]="height - 30" x2="880" [attr.y2]="height - 35"
-        style="stroke:rgb(0,0,0);stroke-width:2"></line>
+        style="stroke:rgb(0,0,0);stroke-width:2px"></line>
   <line x1="900" [attr.y1]="height - 30" x2="880" [attr.y2]="height - 25"
-        style="stroke:rgb(0,0,0);stroke-width:2"></line>
+        style="stroke:rgb(0,0,0);stroke-width:2px"></line>
 
   <g *ngFor="let month of monthTicks">
     <line [attr.x1]="timeToX(month.time)" [attr.y1]="height - 35"
           [attr.x2]="timeToX(month.time)" [attr.y2]="height - 25"
-          style="stroke:rgb(0,0,0);stroke-width:2"></line>
+          style="stroke:rgb(0,0,0);stroke-width:2px"></line>
     <text [attr.x]="timeToX(month.time)" [attr.y]="height - 10"
           text-anchor="middle" font-size="12">
       {{ month.title }}
