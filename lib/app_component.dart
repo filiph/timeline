@@ -18,20 +18,5 @@ import 'data.dart' as data;
   providers: const [materialProviders],
 )
 class AppComponent {
-  String table = "...";
-
   final records = data.records;
-
-  void buildTable() {
-    var buf = new StringBuffer();
-    for (var r in data.records) {
-      buf.write(r.title);
-      buf.write('\t');
-      buf.write(r.start.toIso8601String().substring(0, 10));
-      buf.write('\t');
-      buf.write(r.completion.toIso8601String().substring(0, 10));
-      buf.writeln();
-    }
-    table = buf.toString();
-  }
 }

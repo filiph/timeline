@@ -50,17 +50,3 @@
 <hr>
 
 <button (click)="download()">Download</button>
-
-<ul>
-  <li *ngFor="let r of records; let i=index">
-    {{ r.title }} (x = {{ timeToX(r.completion) }},
-    start = {{ timeToX(r.start) }},
-    y = {{ recordToY(r) }})
-  </li>
-</ul>
-
-<ul>
-  <li *ngFor="let month of monthTicks">
-    {{ month.title }} (x = {{ timeToX(month.time) }})
-  </li>
-</ul>
