@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'dart:html';
 import 'package:angular/angular.dart';
+import 'package:angular_components/material_button/material_button.dart';
 
 class MonthTick {
   final String title;
@@ -50,7 +51,7 @@ class MonthTick {
   selector: 'timeline',
   styleUrls: const ['timeline_component.css'],
   templateUrl: 'timeline_component.html',
-  directives: const [NgFor],
+  directives: const [NgFor, MaterialButtonComponent],
 )
 class TimelineComponent implements OnInit {
   @Input()
