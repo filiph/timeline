@@ -14,7 +14,7 @@ import 'data.dart' as data;
   selector: 'my-app',
   styleUrls: const ['app_component.css'],
   templateUrl: 'app_component.html',
-  directives: const [CORE_DIRECTIVES, materialDirectives, TimelineComponent],
+  directives: const [NgFor, materialDirectives, TimelineComponent],
   providers: const [materialProviders],
 )
 class AppComponent {

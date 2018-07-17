@@ -50,16 +50,14 @@ class MonthTick {
   selector: 'timeline',
   styleUrls: const ['timeline_component.css'],
   templateUrl: 'timeline_component.html',
-  directives: const [
-    CORE_DIRECTIVES,
-  ],
+  directives: const [NgFor],
 )
 class TimelineComponent implements OnInit {
   @Input()
   List<TimelineRecord> records = [];
 
   @ViewChild('vis')
-  ElementRef vis;
+  Element vis;
 
   int padding = 20;
 
@@ -125,7 +123,7 @@ class TimelineComponent implements OnInit {
   }
 
   void download() {
-    var data = (vis.nativeElement as Element).outerHtml;
+    var data = vis.outerHtml;
     var dataComponent = Uri.encodeComponent(data);
     var dataUri = "data:application/octet-stream,$dataComponent";
     var el = new AnchorElement(href: dataUri);
