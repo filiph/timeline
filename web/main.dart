@@ -3,7 +3,15 @@
 
 import 'package:angular/angular.dart';
 import 'package:timeline/app_component.template.dart' as ng;
+import 'package:timeline/src/data/records_bloc.dart';
+
+import 'main.template.dart' as mainNg;
 
 void main() {
-  runApp(ng.AppComponentNgFactory);
+  runApp(ng.AppComponentNgFactory, createInjector: recordsBlocInjector);
 }
+
+@GenerateInjector(const [
+  const ClassProvider(RecordsBloc),
+])
+final InjectorFactory recordsBlocInjector = mainNg.recordsBlocInjector$Injector;

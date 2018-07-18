@@ -1,0 +1,14 @@
+@import 'package:angular_components/css/material/material';
+
+.blue-button {
+  color: $mat-white;
+  background: $mat-blue;
+}
+
+.blue-text-button {
+  color: $mat-blue;
+}
+
+.red-text-button {
+  color: $mat-red;
+}

@@ -2,10 +2,13 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
-
+import 'dart:collection';
 import 'dart:html';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/material_button/material_button.dart';
+import 'package:timeline/src/data/records_bloc.dart';
+import 'package:timeline/src/data/timeline_record.dart';
 
 class MonthTick {
   final String title;
@@ -51,14 +54,23 @@ class MonthTick {
   selector: 'timeline',
   styleUrls: const ['timeline_component.css'],
   templateUrl: 'timeline_component.html',
-  directives: const [NgFor, MaterialButtonComponent],
+  pipes: [
+    AsyncPipe,
+  ],
+  directives: const [
+    NgFor,
+    MaterialButtonComponent,
+  ],
 )
-class TimelineComponent implements OnInit {
-  @Input()
-  List<TimelineRecord> records = [];
+class TimelineComponent {
+  UnmodifiableListView<TimelineRecord> records;
+
+  final RecordsBloc bloc;
 
   @ViewChild('vis')
   Element vis;
+
+  String editEventName = '';
 
   int padding = 20;
 
@@ -66,18 +78,38 @@ class TimelineComponent implements OnInit {
 
   final int height = 600;
 
-  DateTime _lowestTime = new DateTime(1900);
+  DateTime _lowestTime = _defaultLowestTime;
 
-  DateTime _highestTime = new DateTime(2100);
+  static final _defaultLowestTime = new DateTime(1900);
+
+  DateTime _highestTime = _defaultHighestTime;
+
+  static final _defaultHighestTime = new DateTime(2100);
 
   Map<TimelineRecord, int> _tracks = {};
 
   List<MonthTick> monthTicks = [];
 
-  TimelineComponent() {}
+  TimelineComponent(this.bloc) {
+    bloc.records.listen(_updateView);
+  }
 
-  @override
-  Future<Null> ngOnInit() async {
+  void download() {
+    var data = vis.outerHtml;
+    var dataComponent = Uri.encodeComponent(data);
+    var dataUri = "data:application/octet-stream,$dataComponent";
+    var el = new AnchorElement(href: dataUri);
+    el.attributes['download'] = 'timeline.svg';
+    el.style.display = 'none';
+    document.body.append(el);
+    el.click();
+    el.remove();
+  }
+
+  void _updateView(UnmodifiableListView<TimelineRecord> records) {
+    this.records = records;
+    monthTicks.clear();
+    _tracks.clear();
     _lowestTime = records
         .map<DateTime>((r) => r.completion.subtract(r.duration))
         .fold(null, (p, n) => p == null ? n : (p.isBefore(n) ? p : n));
@@ -123,18 +155,6 @@ class TimelineComponent implements OnInit {
     }
   }
 
-  void download() {
-    var data = vis.outerHtml;
-    var dataComponent = Uri.encodeComponent(data);
-    var dataUri = "data:application/octet-stream,$dataComponent";
-    var el = new AnchorElement(href: dataUri);
-    el.attributes['download'] = 'timeline.svg';
-    el.style.display = 'none';
-    document.body.append(el);
-    el.click();
-    el.remove();
-  }
-
   int recordToY(TimelineRecord r) {
     var track = _tracks[r];
     if (track == null) return 0;
@@ -151,27 +171,4 @@ class TimelineComponent implements OnInit {
             whole;
     return (padding + (width - 2 * padding) * ratio).round();
   }
-}
-
-class TimelineRecord {
-  static const _maxShortTitleLength = 35;
-  final DateTime completion;
-  final Duration duration;
-  final String title;
-
-  final String color = "blue";
-
-  const TimelineRecord(this.title, this.completion,
-      [this.duration = const Duration(days: 1)]);
-
-  String get shortTitle {
-    if (title.length <= _maxShortTitleLength) return title;
-    const ellipsis = "…";
-    final half = (_maxShortTitleLength / 2 - ellipsis.length / 2).floor();
-    return "${title.substring(0, half)}"
-        "$ellipsis"
-        "${title.substring(title.length - half)}";
-  }
-
-  DateTime get start => completion.subtract(duration);
 }
