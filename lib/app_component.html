@@ -2,13 +2,6 @@
 
 <timeline></timeline>
 
-<material-button class="blue-button"
-                 (trigger)="startNewRecord()"
-                 [disabled]="showEditDialog"
-                 raised>
-  Add new
-</material-button>
-
 <modal [(visible)]="showEditDialog">
   <material-dialog>
     <h1 header>Add/Edit event</h1>
@@ -32,10 +25,17 @@
   </material-dialog>
 </modal>
 
-<h2>Events</h2>
+<h2>
+  Events &nbsp;
+  <material-button class="blue-text-button"
+                   (trigger)="startNewRecord()"
+                   [disabled]="showEditDialog">
+    Add new
+  </material-button>
+</h2>
 
 <ul>
-  <li *ngFor="let record of recordsBloc.records | async">
+  <li *ngFor="let record of bloc.records | async">
     <strong>{{record.title}}</strong> &mdash; {{ record.start | date}} &nbsp;
     <material-button class="blue-text-button"
                      (trigger)="startEdit(record)">Edit</material-button>

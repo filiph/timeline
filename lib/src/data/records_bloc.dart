@@ -34,6 +34,13 @@ final _defaultRecords = [
   // ..sort((a, b) => b.duration.compareTo(a.duration))
 ];
 
+class RecordChange {
+  final TimelineRecord before;
+  final TimelineRecord after;
+
+  const RecordChange(this.before, this.after);
+}
+
 class RecordsBloc {
   List<TimelineRecord> _records = List<TimelineRecord>.from(_defaultRecords);
 
@@ -46,11 +53,16 @@ class RecordsBloc {
 
   final _removalController = StreamController<TimelineRecord>();
 
+  Sink<RecordChange> get recordChange => _recordChangeController.sink;
+
+  final _recordChangeController = StreamController<RecordChange>();
+
 
 
   RecordsBloc() {
     _additionController.stream.listen(_handleNewRecord);
     _removalController.stream.listen(_handleRemoval);
+    _recordChangeController.stream.listen(_handleRecordChange);
     _publishCurrentRecords();
   }
 
@@ -75,6 +87,13 @@ class RecordsBloc {
   void _handleRemoval(TimelineRecord record) {
     assert(_records.contains(record));
     _records.remove(record);
+    _publishCurrentRecords();
+  }
+
+  void _handleRecordChange(RecordChange change) {
+    assert(_records.contains(change.before));
+    final index = _records.indexOf(change.before);
+    _records[index] = change.after;
     _publishCurrentRecords();
   }
 }

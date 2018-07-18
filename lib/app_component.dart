@@ -33,7 +33,7 @@ import 'package:timeline/src/timeline/timeline_component.dart';
   ],
 )
 class AppComponent {
-  final RecordsBloc recordsBloc;
+  final RecordsBloc bloc;
 
   String editEventTitle = '';
 
@@ -43,7 +43,7 @@ class AppComponent {
 
   DatepickerComparison editEventRange;
 
-  AppComponent(this.recordsBloc);
+  AppComponent(this.bloc);
 
   void closeEditDialog() {
     showEditDialog = false;
@@ -52,17 +52,17 @@ class AppComponent {
 
   void removeCurrentRecord() {
     // TODO ask first
-    recordsBloc.removal.add(editEventCurrent);
+    bloc.removal.add(editEventCurrent);
     editEventTitle = '';
     closeEditDialog();
   }
 
   void saveEditEvent() {
-    recordsBloc.addition.add(new TimelineRecord(
-        editEventTitle, editEventRange.range.start.asUtcTime()));
-    editEventTitle = '';
-    editEventCurrent = null;
-    closeEditDialog();
+    if (editEventCurrent != null) {
+      _editCurrentEvent();
+    } else {
+      _addNewEvent();
+    }
   }
 
   void startEdit(TimelineRecord record) {
@@ -78,5 +78,25 @@ class AppComponent {
   void startNewRecord() {
     editEventTitle = '';
     showEditDialog = true;
+  }
+
+  void _addNewEvent() {
+    bloc.addition.add(_constructFromEditForm());
+    editEventTitle = '';
+    editEventCurrent = null;
+    closeEditDialog();
+  }
+
+  TimelineRecord _constructFromEditForm() {
+    final start = editEventRange.range.start.asUtcTime();
+    return TimelineRecord(editEventTitle, start);
+  }
+
+  void _editCurrentEvent() {
+    bloc.recordChange
+        .add(new RecordChange(editEventCurrent, _constructFromEditForm()));
+    editEventTitle = '';
+    editEventCurrent = null;
+    closeEditDialog();
   }
 }
