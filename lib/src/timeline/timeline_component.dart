@@ -7,7 +7,7 @@ import 'dart:html';
 import 'package:angular/angular.dart';
 import 'package:angular_components/material_button/material_button.dart';
 import 'package:timeline/src/data/records_bloc.dart';
-import 'package:timeline/src/data/timeline_record.dart';
+import 'package:timeline/src/data/record.dart';
 
 class MonthTick {
   final String title;

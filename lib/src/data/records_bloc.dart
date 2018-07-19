@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:rxdart/rxdart.dart';
-import 'package:timeline/src/data/timeline_record.dart';
+import 'package:timeline/src/data/record.dart';
 
 final _defaultRecords = [
   Record.simple("Agency Day SF", DateTime(2018, 8, 2)),

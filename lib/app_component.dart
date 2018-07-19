@@ -4,7 +4,7 @@
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:timeline/src/data/records_bloc.dart';
-import 'package:timeline/src/data/timeline_record.dart';
+import 'package:timeline/src/data/record.dart';
 import 'package:timeline/src/timeline/timeline_component.dart';
 
 // AngularDart info: https://webdev.dartlang.org/angular

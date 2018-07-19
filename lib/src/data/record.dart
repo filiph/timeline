@@ -3,7 +3,7 @@ library record;
 import 'package:built_value/built_value.dart';
 import 'package:meta/meta.dart';
 
-part 'timeline_record.g.dart';
+part 'record.g.dart';
 
 abstract class Record implements Built<Record, RecordBuilder> {
   static const _maxShortTitleLength = 35;
