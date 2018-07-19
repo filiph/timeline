@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timeline/src/data/data.dart';
 import 'package:timeline/src/data/record.dart';
-import 'package:timeline/src/data/serializers.dart';
 
 class RecordChange {
   final Record before;
@@ -24,11 +22,11 @@ class RecordsBloc {
 
   final _removalController = StreamController<Record>();
 
-  final _bulkChangeController = StreamController<String>();
+  final _bulkChangeController = StreamController<Data>();
 
   final _recordChangeController = StreamController<RecordChange>();
 
-  final _bulkDataSubject = BehaviorSubject<String>();
+  final _bulkDataSubject = BehaviorSubject<Data>();
 
   DateTime _currentDataTimestamp = new DateTime.utc(1900);
 
@@ -43,9 +41,9 @@ class RecordsBloc {
 
   Sink<Record> get addition => _additionController.sink;
 
-  Sink<String> get bulkChange => _bulkChangeController.sink;
+  Sink<Data> get bulkChange => _bulkChangeController.sink;
 
-  Stream<String> get bulkData => _bulkDataSubject.stream;
+  Stream<Data> get bulkData => _bulkDataSubject.stream;
 
   Sink<RecordChange> get recordChange => _recordChangeController.sink;
 
@@ -61,8 +59,14 @@ class RecordsBloc {
     _bulkChangeController.close();
   }
 
-  void _handleBulkChange(String string) {
-    final data = serializers.deserialize(json.decode(string));
+  Data _buildData() {
+    final data = Data((b) => b
+      ..timestamp = _currentDataTimestamp
+      ..records = new ListBuilder(_records));
+    return data;
+  }
+
+  void _handleBulkChange(Data data) {
     _updateFromData(data);
     _publishCurrentRecords();
   }
@@ -96,16 +100,8 @@ class RecordsBloc {
 
   void _saveData() {
     _currentDataTimestamp = DateTime.now().toUtc();
-    final data = _serializeData();
+    final data = _buildData();
     _bulkDataSubject.add(data);
-  }
-
-  String _serializeData() {
-    final data = Data((b) => b
-      ..timestamp = _currentDataTimestamp
-      ..records = new ListBuilder(_records));
-    final serialized = serializers.serialize(data);
-    return json.encode(serialized);
   }
 
   void _updateFromData(Data data) {

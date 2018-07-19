@@ -58,14 +58,15 @@ class AppComponent implements OnInit {
 
   @override
   void ngOnInit() {
-    final data = storageService.load();
-    if (data != null) {
+    final dataString = storageService.load();
+    if (dataString != null) {
+      final data = serializers.deserialize(json.decode(dataString));
       bloc.bulkChange.add(data);
     } else {
-      bloc.bulkChange.add(json.encode(serializers.serialize(defaultData)));
+      bloc.bulkChange.add(defaultData);
     }
 
-    bloc.bulkData.listen(storageService.save);
+    bloc.bulkData.listen(_handleBulkData);
   }
 
   void removeCurrentRecord() {
@@ -116,5 +117,11 @@ class AppComponent implements OnInit {
     editEventTitle = '';
     editEventCurrent = null;
     closeEditDialog();
+  }
+
+  void _handleBulkData(Data data) {
+    final serialized = serializers.serialize(data);
+    final jsonString = json.encode(serialized);
+    storageService.save(jsonString);
   }
 }
