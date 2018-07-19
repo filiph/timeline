@@ -56,8 +56,10 @@ class MonthTick {
   templateUrl: 'timeline_component.html',
   pipes: [
     AsyncPipe,
+    DatePipe,
   ],
   directives: const [
+    NgIf,
     NgFor,
     MaterialButtonComponent,
   ],

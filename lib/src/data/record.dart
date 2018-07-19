@@ -35,6 +35,10 @@ abstract class Record implements Built<Record, RecordBuilder> {
         "${title.substring(title.length - half)}";
   }
 
+  int get durationInDays {
+    return 1 + end.difference(start).inDays;
+  }
+
   DateTime get start;
 
   String get title;

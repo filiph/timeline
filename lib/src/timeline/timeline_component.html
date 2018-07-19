@@ -9,10 +9,14 @@
   </style>
 
   <g *ngFor="let r of records">
-    <title>{{ r.title }}</title>
-    <line [attr.x1]="timeToX(r.start)" [attr.y1]="recordToY(r)"
+    <title>{{ r.title }} ({{ r.start | date }}</title>
+    <circle r="5"
+            [attr.cx]="timeToX(r.start)" [attr.cy]="recordToY(r)">
+    </circle>
+    <line *ngIf="r.durationInDays > 1"
+          [attr.x1]="timeToX(r.start)" [attr.y1]="recordToY(r)"
           [attr.x2]="timeToX(r.end)" [attr.y2]="recordToY(r)"
-          style="stroke:rgb(150,150,150);stroke-width:1px" ></line>
+          style="stroke:rgb(0,0,0);stroke-width:5px" ></line>
     <circle r="5"
             [attr.cx]="timeToX(r.end)" [attr.cy]="recordToY(r)">
     </circle>
