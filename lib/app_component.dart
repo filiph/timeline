@@ -66,7 +66,7 @@ class AppComponent implements OnInit {
       bloc.bulkChange.add(defaultData);
     }
 
-    bloc.bulkData.listen(_handleBulkData);
+    bloc.bulkData.listen(_saveBulkData);
   }
 
   void removeCurrentRecord() {
@@ -82,6 +82,17 @@ class AppComponent implements OnInit {
     } else {
       _addNewEvent();
     }
+  }
+
+  void clearAllRecords() {
+    bloc.bulkChange.add(new Data.empty());
+  }
+
+  void fillWithExampleData() {
+    final defaultDataWithLatestTimestamp =
+        defaultData.rebuild((b) => b..timestamp = DateTime.now().toUtc());
+    bloc.bulkChange.add(defaultDataWithLatestTimestamp);
+    _saveBulkData(defaultDataWithLatestTimestamp);
   }
 
   void startEdit(Record record) {
@@ -108,7 +119,8 @@ class AppComponent implements OnInit {
 
   Record _constructFromEditForm() {
     final start = editEventRange.range.start.asUtcTime();
-    return Record.simple(editEventTitle, start); // TODO: end
+    final duration = editEventRange.range.end.asUtcTime().difference(start);
+    return Record.simple(editEventTitle, start, duration);
   }
 
   void _editCurrentEvent() {
@@ -119,7 +131,7 @@ class AppComponent implements OnInit {
     closeEditDialog();
   }
 
-  void _handleBulkData(Data data) {
+  void _saveBulkData(Data data) {
     final serialized = serializers.serialize(data);
     final jsonString = json.encode(serialized);
     storageService.save(jsonString);

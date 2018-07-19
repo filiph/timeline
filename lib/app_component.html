@@ -11,6 +11,8 @@
         required
         floatingLabel></material-input>
     <material-date-range-picker class="simplified-example"
+                                [supportsComparison]="false"
+                                [showNextPrevButtons]="false"
                                 compact
                                 [(range)]="editEventRange">
     </material-date-range-picker>
@@ -41,3 +43,14 @@
                      (trigger)="startEdit(record)">Edit</material-button>
   </li>
 </ul>
+
+<h2>Bulk changes</h2>
+
+<material-button class="red-button"
+                 (trigger)="clearAllRecords()">
+  Clear all
+</material-button>
+
+<material-button (trigger)="fillWithExampleData()">
+  Fill with example data
+</material-button>

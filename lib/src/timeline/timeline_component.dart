@@ -128,7 +128,7 @@ class TimelineComponent {
   void _updateView(UnmodifiableListView<Record> records) {
     monthTicks.clear();
     _tracks.clear();
-    if (records.isEmpty) return;
+    if (records.length < 2) return;
     _lowestTime = records
         .map<DateTime>((r) => r.start)
         .fold(null, (p, n) => p == null ? n : (p.isBefore(n) ? p : n));
