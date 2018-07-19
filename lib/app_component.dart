@@ -1,10 +1,15 @@
 // Copyright (c) 2017, filiph. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
-import 'package:timeline/src/data/records_bloc.dart';
+import 'package:timeline/src/data/data.dart';
 import 'package:timeline/src/data/record.dart';
+import 'package:timeline/src/data/records_bloc.dart';
+import 'package:timeline/src/data/serializers.dart';
+import 'package:timeline/src/services/storage.dart';
 import 'package:timeline/src/timeline/timeline_component.dart';
 
 // AngularDart info: https://webdev.dartlang.org/angular
@@ -26,13 +31,12 @@ import 'package:timeline/src/timeline/timeline_component.dart';
     MaterialDatepickerComponent,
   ],
   providers: const [
-    RecordsBloc,
     materialProviders,
     MaterialButtonComponent,
     materialInputDirectives,
   ],
 )
-class AppComponent {
+class AppComponent implements OnInit {
   final RecordsBloc bloc;
 
   String editEventTitle = '';
@@ -41,13 +45,27 @@ class AppComponent {
 
   Record editEventCurrent;
 
+  final StorageService storageService;
+
   DatepickerComparison editEventRange;
 
-  AppComponent(this.bloc);
+  AppComponent(this.bloc, this.storageService);
 
   void closeEditDialog() {
     showEditDialog = false;
     editEventCurrent = null;
+  }
+
+  @override
+  void ngOnInit() {
+    final data = storageService.load();
+    if (data != null) {
+      bloc.bulkChange.add(data);
+    } else {
+      bloc.bulkChange.add(json.encode(serializers.serialize(defaultData)));
+    }
+
+    bloc.bulkData.listen(storageService.save);
   }
 
   void removeCurrentRecord() {

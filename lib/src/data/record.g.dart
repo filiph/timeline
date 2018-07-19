@@ -14,6 +14,62 @@ part of record;
 // ignore_for_file: prefer_expression_function_bodies
 // ignore_for_file: sort_constructors_first
 
+Serializer<Record> _$recordSerializer = new _$RecordSerializer();
+
+class _$RecordSerializer implements StructuredSerializer<Record> {
+  @override
+  final Iterable<Type> types = const [Record, _$Record];
+  @override
+  final String wireName = 'Record';
+
+  @override
+  Iterable serialize(Serializers serializers, Record object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'end',
+      serializers.serialize(object.end,
+          specifiedType: const FullType(DateTime)),
+      'start',
+      serializers.serialize(object.start,
+          specifiedType: const FullType(DateTime)),
+      'title',
+      serializers.serialize(object.title,
+          specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  Record deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new RecordBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'end':
+          result.end = serializers.deserialize(value,
+              specifiedType: const FullType(DateTime)) as DateTime;
+          break;
+        case 'start':
+          result.start = serializers.deserialize(value,
+              specifiedType: const FullType(DateTime)) as DateTime;
+          break;
+        case 'title':
+          result.title = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
 class _$Record extends Record {
   @override
   final DateTime end;

@@ -1,6 +1,7 @@
 // Copyright (c) 2017, filiph. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:collection';
 import 'dart:html';
 
@@ -123,9 +124,9 @@ class TimelineComponent {
   }
 
   void _updateView(UnmodifiableListView<Record> records) {
-    this.records = records;
     monthTicks.clear();
     _tracks.clear();
+    if (records.isEmpty) return;
     _lowestTime = records
         .map<DateTime>((r) => r.start)
         .fold(null, (p, n) => p == null ? n : (p.isBefore(n) ? p : n));
@@ -169,5 +170,8 @@ class TimelineComponent {
         }
       }
     }
+    new Timer(const Duration(milliseconds: 100), () {
+      this.records = records;
+    });
   }
 }
