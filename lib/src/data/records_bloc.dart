@@ -5,59 +5,53 @@ import 'package:rxdart/rxdart.dart';
 import 'package:timeline/src/data/timeline_record.dart';
 
 final _defaultRecords = [
-  TimelineRecord("Agency Day SF", DateTime(2018, 8, 2)),
-  TimelineRecord("SF Android", DateTime(2018, 8, 2)),
-  TimelineRecord("iOS Devs Meetup", DateTime(2018, 8, 20)),
-  TimelineRecord("DevFest Tokyo", DateTime(2018, 9, 1)),
-  TimelineRecord("GDD China", DateTime(2018, 9, 21), const Duration(days: 2)),
-  TimelineRecord("WomenWhoCode Hackathon", DateTime(2018, 9, 21)),
-  TimelineRecord("DevFest Ukraine", DateTime(2018, 10, 12)),
-  TimelineRecord("DevFest India", DateTime(2018, 10, 13)),
-  TimelineRecord("DevFest Nantes", DateTime(2018, 10, 18)),
-  TimelineRecord(
+  Record.simple("Agency Day SF", DateTime(2018, 8, 2)),
+  Record.simple("SF Android", DateTime(2018, 8, 2)),
+  Record.simple("iOS Devs Meetup", DateTime(2018, 8, 20)),
+  Record.simple("DevFest Tokyo", DateTime(2018, 9, 1)),
+  Record.simple("GDD China", DateTime(2018, 9, 21), const Duration(days: 2)),
+  Record.simple("WomenWhoCode Hackathon", DateTime(2018, 9, 21)),
+  Record.simple("DevFest Ukraine", DateTime(2018, 10, 12)),
+  Record.simple("DevFest India", DateTime(2018, 10, 13)),
+  Record.simple("DevFest Nantes", DateTime(2018, 10, 18)),
+  Record.simple(
       "DroidCon London", DateTime(2018, 10, 26), const Duration(days: 2)),
-  TimelineRecord(
+  Record.simple(
       "ReactiveConf Prague", DateTime(2018, 10, 31), const Duration(days: 3)),
-  TimelineRecord("Firebase DevSummit", DateTime(2018, 10, 29)),
-  TimelineRecord("Android DevSummit", DateTime(2018, 11, 7)),
-  TimelineRecord("DevFest Prague", DateTime(2018, 11, 9)),
-  TimelineRecord("DevFest DACH", DateTime(2018, 11, 10)),
-  TimelineRecord("DevFest Seoul", DateTime(2018, 11, 10)),
-  TimelineRecord("GDE Summit", DateTime(2018, 11, 11), const Duration(days: 2)),
-  TimelineRecord("Chrome DevSummit", DateTime(2018, 11, 12)),
-  TimelineRecord("QCon", DateTime(2018, 11, 5)),
-  TimelineRecord("Devoxx BE", DateTime(2018, 11, 17), const Duration(days: 5)),
-  TimelineRecord(
+  Record.simple("Firebase DevSummit", DateTime(2018, 10, 29)),
+  Record.simple("Android DevSummit", DateTime(2018, 11, 7)),
+  Record.simple("DevFest Prague", DateTime(2018, 11, 9)),
+  Record.simple("DevFest DACH", DateTime(2018, 11, 10)),
+  Record.simple("DevFest Seoul", DateTime(2018, 11, 10)),
+  Record.simple("GDE Summit", DateTime(2018, 11, 11), const Duration(days: 2)),
+  Record.simple("Chrome DevSummit", DateTime(2018, 11, 12)),
+  Record.simple("QCon", DateTime(2018, 11, 5)),
+  Record.simple("Devoxx BE", DateTime(2018, 11, 17), const Duration(days: 5)),
+  Record.simple(
       "GOTO Copenhagen", DateTime(2018, 11, 19), const Duration(days: 5)),
-  TimelineRecord("London Event", DateTime(2018, 12, 3)),
+  Record.simple("London Event", DateTime(2018, 12, 3)),
 
   // ..sort((a, b) => b.duration.compareTo(a.duration))
 ];
 
 class RecordChange {
-  final TimelineRecord before;
-  final TimelineRecord after;
+  final Record before;
+  final Record after;
 
   const RecordChange(this.before, this.after);
 }
 
 class RecordsBloc {
-  List<TimelineRecord> _records = List<TimelineRecord>.from(_defaultRecords);
+  List<Record> _records = List<Record>.from(_defaultRecords);
 
-  final _additionController = StreamController<TimelineRecord>();
+  final _additionController = StreamController<Record>();
 
-  final _recordsSubject =
-      BehaviorSubject<UnmodifiableListView<TimelineRecord>>();
+  final _recordsSubject = BehaviorSubject<UnmodifiableListView<Record>>(
+      seedValue: UnmodifiableListView(_defaultRecords));
 
-  Sink<TimelineRecord> get removal => _removalController.sink;
-
-  final _removalController = StreamController<TimelineRecord>();
-
-  Sink<RecordChange> get recordChange => _recordChangeController.sink;
+  final _removalController = StreamController<Record>();
 
   final _recordChangeController = StreamController<RecordChange>();
-
-
 
   RecordsBloc() {
     _additionController.stream.listen(_handleNewRecord);
@@ -66,27 +60,22 @@ class RecordsBloc {
     _publishCurrentRecords();
   }
 
-  Sink<TimelineRecord> get addition => _additionController.sink;
+  Sink<Record> get addition => _additionController.sink;
 
-  Stream<UnmodifiableListView<TimelineRecord>> get records =>
-      _recordsSubject.stream;
+  Sink<RecordChange> get recordChange => _recordChangeController.sink;
+
+  Stream<UnmodifiableListView<Record>> get records => _recordsSubject.stream;
+
+  Sink<Record> get removal => _removalController.sink;
 
   void close() {
     _additionController.close();
+    _removalController.close();
+    _recordChangeController.close();
   }
 
-  void _handleNewRecord(TimelineRecord record) {
+  void _handleNewRecord(Record record) {
     _records.add(record);
-    _publishCurrentRecords();
-  }
-
-  void _publishCurrentRecords() {
-    _recordsSubject.add(UnmodifiableListView(_records));
-  }
-
-  void _handleRemoval(TimelineRecord record) {
-    assert(_records.contains(record));
-    _records.remove(record);
     _publishCurrentRecords();
   }
 
@@ -95,5 +84,15 @@ class RecordsBloc {
     final index = _records.indexOf(change.before);
     _records[index] = change.after;
     _publishCurrentRecords();
+  }
+
+  void _handleRemoval(Record record) {
+    assert(_records.contains(record));
+    _records.remove(record);
+    _publishCurrentRecords();
+  }
+
+  void _publishCurrentRecords() {
+    _recordsSubject.add(UnmodifiableListView(_records));
   }
 }

@@ -12,6 +12,8 @@ void main() {
 }
 
 @GenerateInjector(const [
-  const ClassProvider(RecordsBloc),
+  FactoryProvider(RecordsBloc, webBasedBlocFactory),
 ])
 final InjectorFactory recordsBlocInjector = mainNg.recordsBlocInjector$Injector;
+
+RecordsBloc webBasedBlocFactory() => RecordsBloc();

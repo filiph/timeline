@@ -1,7 +1,6 @@
 // Copyright (c) 2017, filiph. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:async';
 import 'dart:collection';
 import 'dart:html';
 
@@ -63,7 +62,11 @@ class MonthTick {
   ],
 )
 class TimelineComponent {
-  UnmodifiableListView<TimelineRecord> records;
+  static final _defaultLowestTime = new DateTime(1900);
+
+  static final _defaultHighestTime = new DateTime(2100);
+
+  UnmodifiableListView<Record> records;
 
   final RecordsBloc bloc;
 
@@ -80,13 +83,9 @@ class TimelineComponent {
 
   DateTime _lowestTime = _defaultLowestTime;
 
-  static final _defaultLowestTime = new DateTime(1900);
-
   DateTime _highestTime = _defaultHighestTime;
 
-  static final _defaultHighestTime = new DateTime(2100);
-
-  Map<TimelineRecord, int> _tracks = {};
+  Map<Record, int> _tracks = {};
 
   List<MonthTick> monthTicks = [];
 
@@ -106,15 +105,32 @@ class TimelineComponent {
     el.remove();
   }
 
-  void _updateView(UnmodifiableListView<TimelineRecord> records) {
+  int recordToY(Record r) {
+    var track = _tracks[r];
+    if (track == null) return 0;
+    return height - 50 - track * 40;
+  }
+
+  int timeToX(DateTime time) {
+    assert(time.isAfter(_lowestTime) || time.isAtSameMomentAs(_lowestTime));
+    assert(time.isBefore(_highestTime) || time.isAtSameMomentAs(_highestTime));
+    final whole = _highestTime.millisecondsSinceEpoch -
+        _lowestTime.millisecondsSinceEpoch;
+    final ratio =
+        (time.millisecondsSinceEpoch - _lowestTime.millisecondsSinceEpoch) /
+            whole;
+    return (padding + (width - 2 * padding) * ratio).round();
+  }
+
+  void _updateView(UnmodifiableListView<Record> records) {
     this.records = records;
     monthTicks.clear();
     _tracks.clear();
     _lowestTime = records
-        .map<DateTime>((r) => r.completion.subtract(r.duration))
+        .map<DateTime>((r) => r.start)
         .fold(null, (p, n) => p == null ? n : (p.isBefore(n) ? p : n));
     _highestTime = records
-        .map<DateTime>((r) => r.completion)
+        .map<DateTime>((r) => r.end)
         .fold(null, (p, n) => p == null ? n : (n.isAfter(p) ? n : p));
     var wholeDuration = _highestTime.difference(_lowestTime);
     var padding = wholeDuration * 1.1;
@@ -134,11 +150,11 @@ class TimelineComponent {
         bool taken = false;
         for (var key in _tracks.keys.where((k) => _tracks[k] == track)) {
           var startWithBuffer = key.start.subtract(const Duration(days: 20));
-          var endWithBuffer = key.completion.add(const Duration(days: 20));
+          var endWithBuffer = key.end.add(const Duration(days: 20));
           var startsInside = r.start.isAfter(startWithBuffer) &&
               r.start.isBefore(endWithBuffer);
-          var endsInside = r.completion.isAfter(startWithBuffer) &&
-              r.completion.isBefore(endWithBuffer);
+          var endsInside =
+              r.end.isAfter(startWithBuffer) && r.end.isBefore(endWithBuffer);
           if (startsInside || endsInside /* TODO: encompasses */) {
             taken = true;
             break;
@@ -153,22 +169,5 @@ class TimelineComponent {
         }
       }
     }
-  }
-
-  int recordToY(TimelineRecord r) {
-    var track = _tracks[r];
-    if (track == null) return 0;
-    return height - 50 - track * 40;
-  }
-
-  int timeToX(DateTime time) {
-    assert(time.isAfter(_lowestTime) || time.isAtSameMomentAs(_lowestTime));
-    assert(time.isBefore(_highestTime) || time.isAtSameMomentAs(_highestTime));
-    final whole = _highestTime.millisecondsSinceEpoch -
-        _lowestTime.millisecondsSinceEpoch;
-    final ratio =
-        (time.millisecondsSinceEpoch - _lowestTime.millisecondsSinceEpoch) /
-            whole;
-    return (padding + (width - 2 * padding) * ratio).round();
   }
 }

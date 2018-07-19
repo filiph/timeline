@@ -1,14 +1,27 @@
+library record;
 
-class TimelineRecord {
+import 'package:built_value/built_value.dart';
+import 'package:meta/meta.dart';
+
+part 'timeline_record.g.dart';
+
+abstract class Record implements Built<Record, RecordBuilder> {
   static const _maxShortTitleLength = 35;
-  final DateTime completion;
-  final Duration duration;
-  final String title;
 
-  final String color = "blue";
+  factory Record({
+    @required String title,
+    @required DateTime start,
+    @required DateTime end,
+  }) = _$Record._;
 
-  const TimelineRecord(this.title, this.completion,
-      [this.duration = const Duration(days: 1)]);
+  factory Record.simple(String title, DateTime start, [Duration duration]) {
+    final end = duration == null ? start : start.add(duration);
+    return Record(title: title, start: start, end: end);
+  }
+
+  Record._();
+
+  DateTime get end;
 
   String get shortTitle {
     if (title.length <= _maxShortTitleLength) return title;
@@ -19,5 +32,7 @@ class TimelineRecord {
         "${title.substring(title.length - half)}";
   }
 
-  DateTime get start => completion.subtract(duration);
+  DateTime get start;
+
+  String get title;
 }

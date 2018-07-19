@@ -11,12 +11,12 @@
   <g *ngFor="let r of records">
     <title>{{ r.title }}</title>
     <line [attr.x1]="timeToX(r.start)" [attr.y1]="recordToY(r)"
-          [attr.x2]="timeToX(r.completion)" [attr.y2]="recordToY(r)"
+          [attr.x2]="timeToX(r.end)" [attr.y2]="recordToY(r)"
           style="stroke:rgb(150,150,150);stroke-width:1px" ></line>
     <circle r="5"
-            [attr.cx]="timeToX(r.completion)" [attr.cy]="recordToY(r)">
+            [attr.cx]="timeToX(r.end)" [attr.cy]="recordToY(r)">
     </circle>
-    <text [attr.x]="timeToX(r.completion)" [attr.y]="recordToY(r) - 15"
+    <text [attr.x]="timeToX(r.end)" [attr.y]="recordToY(r) - 15"
           font-size="12"
           fill="black" text-anchor="end" alignment-baseline="central">
       {{ r.shortTitle }}

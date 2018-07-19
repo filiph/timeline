@@ -39,7 +39,7 @@ class AppComponent {
 
   bool showEditDialog = false;
 
-  TimelineRecord editEventCurrent;
+  Record editEventCurrent;
 
   DatepickerComparison editEventRange;
 
@@ -65,11 +65,11 @@ class AppComponent {
     }
   }
 
-  void startEdit(TimelineRecord record) {
+  void startEdit(Record record) {
     editEventCurrent = record;
     editEventTitle = record.title;
     final start = Date.fromTime(record.start);
-    final end = Date.fromTime(record.completion);
+    final end = Date.fromTime(record.end);
     editEventRange = DatepickerComparison.noComparison(
         DatepickerDateRange.custom(start, end));
     showEditDialog = true;
@@ -87,9 +87,9 @@ class AppComponent {
     closeEditDialog();
   }
 
-  TimelineRecord _constructFromEditForm() {
+  Record _constructFromEditForm() {
     final start = editEventRange.range.start.asUtcTime();
-    return TimelineRecord(editEventTitle, start);
+    return Record.simple(editEventTitle, start); // TODO: end
   }
 
   void _editCurrentEvent() {
