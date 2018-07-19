@@ -37,7 +37,7 @@ final Data defaultData = Data((b) => b
         "Devoxx BE", DateTime.utc(2018, 11, 17), const Duration(days: 5)),
     Record.simple(
         "GOTO Copenhagen", DateTime.utc(2018, 11, 19), const Duration(days: 5)),
-    Record.simple("London Event", DateTime.utc(2018, 12, 3)),
+    // Record.simple("London Event", DateTime.utc(2018, 12, 3)),
   ]));
 
 typedef void DataBuilderUpdater(DataBuilder b);
