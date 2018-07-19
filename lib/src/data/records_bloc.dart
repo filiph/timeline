@@ -94,7 +94,9 @@ class RecordsBloc {
   }
 
   void _publishCurrentRecords() {
-    _records.sort((a, b) => a.start.compareTo(b.start));
+    // Sort by length so that longer events are at the bottom
+    // of the timeline graph.
+    _records.sort((a, b) => -a.durationInDays.compareTo(b.durationInDays));
     _recordsSubject.add(UnmodifiableListView(_records));
   }
 
