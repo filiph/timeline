@@ -25,7 +25,9 @@
                                 [supportsComparison]="false"
                                 [showNextPrevButtons]="false"
                                 compact
-                                [(range)]="editEventRange">
+                                [(range)]="editEventRange"
+                                [minDate]="minSelectableDate"
+                                [maxDate]="maxSelectableDate">
     </material-date-range-picker>
     <div footer>
       <material-button class="blue-button"

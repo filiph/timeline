@@ -51,6 +51,10 @@ class AppComponent implements OnInit {
 
   final StorageService storageService;
 
+  final Date maxSelectableDate = Date(DateTime.now().year + 20);
+
+  final Date minSelectableDate = Date(1900);
+
   DatepickerComparison editEventRange;
 
   String editAsTextData = '';
