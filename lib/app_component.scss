@@ -17,3 +17,8 @@
 .red-text-button {
   color: $mat-red;
 }
+
+.text-entry-input {
+  display: block;
+  width: $mat-grid * 40;
+}

@@ -68,3 +68,28 @@
 <material-button (trigger)="fillWithExampleData()">
   Fill with example data
 </material-button>
+
+<material-button (trigger)="startEditAsText()"
+                 [disabled]="showEditAsTextDialog">
+  Edit as JSON
+</material-button>
+
+<modal [(visible)]="showEditAsTextDialog">
+  <material-dialog>
+    <h1 header>Edit as text</h1>
+    <material-input
+        label="Data"
+        class="text-entry-input"
+        [(ngModel)]="editAsTextData"
+        required
+        multiline
+        rows="10">
+    </material-input>
+    <div footer>
+      <material-button class="blue-button"
+                       autoFocus
+                       (trigger)="saveEditAsText()">Save</material-button>
+      <material-button (trigger)="closeEditAsTextDialog()">Close</material-button>
+    </div>
+  </material-dialog>
+</modal>

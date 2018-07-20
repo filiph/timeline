@@ -16,6 +16,8 @@ class RecordChange {
 class RecordsBloc {
   final List<Record> _records = [];
 
+  final _bulkDataRequestController = StreamController<Null>();
+
   final _additionController = StreamController<Record>();
 
   final _recordsSubject = BehaviorSubject<UnmodifiableListView<Record>>();
@@ -35,6 +37,7 @@ class RecordsBloc {
     _removalController.stream.listen(_handleRemoval);
     _recordChangeController.stream.listen(_handleRecordChange);
     _bulkChangeController.stream.listen(_handleBulkChange);
+    _bulkDataRequestController.stream.listen(_handleBulkDataRequest);
 
     _publishCurrentRecords();
   }
@@ -44,6 +47,8 @@ class RecordsBloc {
   Sink<Data> get bulkChange => _bulkChangeController.sink;
 
   Stream<Data> get bulkData => _bulkDataSubject.stream;
+
+  Sink<Null> get bulkDataRequest => _bulkDataRequestController.sink;
 
   Sink<RecordChange> get recordChange => _recordChangeController.sink;
 
@@ -57,6 +62,7 @@ class RecordsBloc {
     _recordChangeController.close();
     _bulkDataSubject.close();
     _bulkChangeController.close();
+    _bulkDataRequestController.close();
   }
 
   Data _buildData() {
@@ -113,5 +119,10 @@ class RecordsBloc {
     }
     _records.clear();
     _records.addAll(data.records);
+  }
+
+  void _handleBulkDataRequest(Null event) {
+    final data = _buildData();
+    _bulkDataSubject.add(data);
   }
 }

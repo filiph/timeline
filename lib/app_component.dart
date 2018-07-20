@@ -37,11 +37,15 @@ import 'package:timeline/src/timeline/timeline_component.dart';
   ],
 )
 class AppComponent implements OnInit {
+  static final _jsonEncoderPretty = JsonEncoder.withIndent('  ');
+
   final RecordsBloc bloc;
 
   String editEventTitle = '';
 
   bool showEditDialog = false;
+
+  bool showEditAsTextDialog = false;
 
   Record editEventCurrent;
 
@@ -49,11 +53,28 @@ class AppComponent implements OnInit {
 
   DatepickerComparison editEventRange;
 
+  String editAsTextData = '';
+
   AppComponent(this.bloc, this.storageService);
+
+  void clearAllRecords() {
+    bloc.bulkChange.add(new Data.empty());
+  }
+
+  void closeEditAsTextDialog() {
+    showEditAsTextDialog = false;
+  }
 
   void closeEditDialog() {
     showEditDialog = false;
     editEventCurrent = null;
+  }
+
+  void fillWithExampleData() {
+    final defaultDataWithLatestTimestamp =
+        defaultData.rebuild((b) => b..timestamp = DateTime.now().toUtc());
+    bloc.bulkChange.add(defaultDataWithLatestTimestamp);
+    _saveBulkData(defaultDataWithLatestTimestamp);
   }
 
   @override
@@ -76,23 +97,20 @@ class AppComponent implements OnInit {
     closeEditDialog();
   }
 
+  void saveEditAsText() {
+    final data = serializers.deserialize(json.decode(editAsTextData));
+    bloc.bulkChange.add(data);
+    // Force to save the data.
+    bloc.bulkDataRequest.add(null);
+    showEditAsTextDialog = false;
+  }
+
   void saveEditEvent() {
     if (editEventCurrent != null) {
       _editCurrentEvent();
     } else {
       _addNewEvent();
     }
-  }
-
-  void clearAllRecords() {
-    bloc.bulkChange.add(new Data.empty());
-  }
-
-  void fillWithExampleData() {
-    final defaultDataWithLatestTimestamp =
-        defaultData.rebuild((b) => b..timestamp = DateTime.now().toUtc());
-    bloc.bulkChange.add(defaultDataWithLatestTimestamp);
-    _saveBulkData(defaultDataWithLatestTimestamp);
   }
 
   void startEdit(Record record) {
@@ -103,6 +121,12 @@ class AppComponent implements OnInit {
     editEventRange = DatepickerComparison.noComparison(
         DatepickerDateRange.custom(start, end));
     showEditDialog = true;
+  }
+
+  void startEditAsText() {
+    showEditAsTextDialog = true;
+    // Force-refresh the data.
+    bloc.bulkDataRequest.add(null);
   }
 
   void startNewRecord() {
@@ -133,7 +157,8 @@ class AppComponent implements OnInit {
 
   void _saveBulkData(Data data) {
     final serialized = serializers.serialize(data);
-    final jsonString = json.encode(serialized);
+    final jsonString = _jsonEncoderPretty.convert(serialized);
+    editAsTextData = jsonString;
     storageService.save(jsonString);
   }
 }
