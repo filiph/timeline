@@ -2,6 +2,7 @@ library record;
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
 part 'record.g.dart';
@@ -37,6 +38,29 @@ abstract class Record implements Built<Record, RecordBuilder> {
 
   int get durationInDays {
     return 1 + end.difference(start).inDays;
+  }
+
+  String get formattedRange {
+    final buf = StringBuffer();
+    final shortDateFormat = DateFormat.MMMd();
+
+    // "Apr 7"
+    buf.write(shortDateFormat.format(start));
+
+    if (start.month != end.month) {
+      //"-May 2"
+      buf.write("-");
+      buf.write(shortDateFormat.format(end));
+    } else if (durationInDays > 1) {
+      // "-11"
+      buf.write("-${end.day}");
+    }
+
+    // ", 2018"
+    buf.write(", ${end.year}");
+
+    // "Apr 7-11, 2018"
+    return buf.toString();
   }
 
   DateTime get start;

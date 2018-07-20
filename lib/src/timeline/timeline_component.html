@@ -9,7 +9,7 @@
   </style>
 
   <g *ngFor="let r of records">
-    <title>{{ r.title }} ({{ r.start | date }})</title>
+    <title>{{ r.title }} ({{ r.formattedRange }})</title>
     <circle r="5"
             [attr.cx]="timeToX(r.start)" [attr.cy]="recordToY(r)">
     </circle>

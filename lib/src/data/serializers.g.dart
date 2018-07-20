@@ -17,6 +17,7 @@ part of 'serializers.dart';
 Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Data.serializer)
       ..add(Record.serializer)
+      ..add(Record.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Record)]),
           () => new ListBuilder<Record>()))

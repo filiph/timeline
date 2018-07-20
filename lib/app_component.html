@@ -43,15 +43,18 @@
   <material-button class="blue-text-button"
                    (trigger)="startNewRecord()"
                    [disabled]="showEditDialog">
+    <material-icon icon="add"></material-icon>
     Add new
   </material-button>
 </h2>
 
 <ul>
   <li *ngFor="let record of bloc.records | async">
-    <strong>{{record.title}}</strong> &mdash; {{ record.start | date}} &nbsp;
-    <material-button class="blue-text-button"
-                     (trigger)="startEdit(record)">Edit</material-button>
+    <strong>{{record.title}}</strong> &mdash; {{ record.formattedRange }} &nbsp;
+    <material-button icon class="blue-text-button"
+                     (trigger)="startEdit(record)">
+      <material-icon icon="edit"></material-icon>
+    </material-button>
   </li>
 </ul>
 
